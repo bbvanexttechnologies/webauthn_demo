@@ -52,6 +52,7 @@
 </template>
 
 <script>
+  const axios = require('axios');
   export default {
     name: 'LoginForm',
     data: () => ({
@@ -64,14 +65,44 @@
     }),
     methods: {
       submit(){
-
         if (this.valid){
+          axios.post('http://localhost:5000/login/init', {
+            username: this.email
+          })
+          .then( async function (response) {
+            console.log('challenge',response)
+            const transformedCredentialRequestOptions = webauthn_tools.transformCredentialRequestOptions(
+                response.data);
 
-          console.log('entra')
+            let credential;
+            try {
+                credential = await navigator.credentials.get({
+                publicKey: transformedCredentialRequestOptions,
+              });
+            } catch (err) {
+                return console.error("Error when creating credential:", err);
+            }
+            console.log('credential',credential)
+            let transformAssertionForServer;
+            transformAssertionForServer = webauthn_tools.transformAssertionForServer(credential)
+            console.log("transformAssertionForServer",transformAssertionForServer)
+            axios.post('http://localhost:5000/login/end', {
+              AuthenticatorAttestationResponse: transformAssertionForServer
+            })
+            .then( async function (response) {
+              console.log(response)
+
+            })
+            .catch(err => {
+                console.log(err)
+            })
+
+          });
+
 
         }
       }
     }
   }
-  
+  var webauthn_tools = require('../utils/webauthn.js');
 </script>

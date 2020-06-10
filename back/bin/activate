@@ -46,7 +46,7 @@ deactivate () {
 # unset irrelevant variables
 deactivate nondestructive
 
-VIRTUAL_ENV="/Users/ruthgnz/Documents/2020/FIDO-POST/back"
+VIRTUAL_ENV="/Users/ruthgnz/Documents/2020/FIDO-POST/webauthn_demo/back"
 export VIRTUAL_ENV
 
 _OLD_VIRTUAL_PATH="$PATH"

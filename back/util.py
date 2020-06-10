@@ -16,6 +16,7 @@ def validate_username(username):
     if len(username) > USERNAME_MAX_LENGTH:
         return False
 
+    username=username.replace("@","").replace(".","")
     if not username.isalnum():
         return False
 

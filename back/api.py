@@ -1,5 +1,5 @@
 from flask import Flask
-from flask import jsonify,request
+from flask import jsonify,request, make_response
 import webauthn
 import util
 from flask_cors import CORS
@@ -9,6 +9,12 @@ import base64
 import math
 import json
 import os
+import binascii
+from flask_jwt_extended import (
+    JWTManager, jwt_required, create_access_token, get_jwt_identity,
+    get_jwt_identity, get_jwt_claims, verify_jwt_in_request, set_access_cookies
+)
+import datetime
 
 
 RP_ID = 'localhost'
@@ -75,7 +81,7 @@ def webauthn_begin_activate():
 def webauthn_end_activate():
     jsonData = request.get_json()
     AuthenticatorAttestationResponse = jsonData['AuthenticatorAttestationResponse']
-    clientDataJSON = AuthenticatorAttestationResponse['response']['clientDataJSON']
+    clientDataJSON = AuthenticatorAttestationResponse['clientDataJSON']
     clientDataJSON_padding = clientDataJSON.ljust((int)(math.ceil(len(clientDataJSON) / 4)) * 4, '=')
     clientDataJSON = base64.b64decode(clientDataJSON_padding).decode('utf8')
     clientDataJSONparsed = json.loads(clientDataJSON)
@@ -88,7 +94,7 @@ def webauthn_end_activate():
     self_attestation_permitted = True
     none_attestation_permitted = True
 
-    registration_response = {'clientData':AuthenticatorAttestationResponse['response']['clientDataJSON'],'attObj':AuthenticatorAttestationResponse['response']['attestationObject']}
+    registration_response = {'clientData':AuthenticatorAttestationResponse['clientDataJSON'],'attObj':AuthenticatorAttestationResponse['attestationObject']}
     trust_anchor_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), TRUST_ANCHOR_DIR)
     webauthn_registration_response = webauthn.WebAuthnRegistrationResponse(
         RP_ID,
@@ -119,3 +125,90 @@ def webauthn_end_activate():
     #Remove from PublicKeyCredentialCreationOptions
     database.delete_db("delete from PublicKeyCredentialCreationOptions where challenge=?",[retrievedChallenge])
     return jsonify({'success': 'User successfully registered.'})
+
+
+@app.route('/login/init', methods=['POST'])
+def webauthn_begin_assertion():
+    jsonData = request.get_json()
+    username = jsonData['username']
+
+    if not util.validate_username(username):
+        return make_response(jsonify({'fail': 'Invalid username.'}), 401)
+
+    user = database.query_db("select * from Users where username=?",[username])[0]
+    if len(user) == 0:
+        return make_response(jsonify({'fail': 'User does not exist.'}), 401)
+    if not user[4]:
+        return make_response(jsonify({'fail': 'Unknown credential ID.'}), 401)
+
+
+    challenge = util.generate_challenge(32)
+
+    # We strip the padding from the challenge stored in the session
+    # for the reasons outlined in the comment in webauthn_begin_activate.
+    toStoreChallenge = challenge.rstrip('=')
+    try:
+        insert = database.insert_db("insert into PublicKeyCredentialCreationOptions VALUES (?,?,?,?,?,?)",[None, None,user[0],None,username,toStoreChallenge])
+    except:
+        update = database.insert_db("update PublicKeyCredentialCreationOptions SET challenge=? where user_username=?",[toStoreChallenge,username])
+    webauthn_user = webauthn.WebAuthnUser(
+        user[0], user[1], user[2], user[6],
+        user[4], user[3], user[5], user[7])
+
+    webauthn_assertion_options = webauthn.WebAuthnAssertionOptions(
+        webauthn_user, challenge)
+
+    return jsonify(webauthn_assertion_options.assertion_dict)
+
+@app.route('/login/end', methods=['POST'])
+def verify_assertion():
+    jsonData = request.get_json()
+    AuthenticatorAttestationResponse = jsonData['AuthenticatorAttestationResponse']
+    clientDataJSON = AuthenticatorAttestationResponse['clientDataJSON']
+    clientDataJSON_padding = clientDataJSON.ljust((int)(math.ceil(len(clientDataJSON) / 4)) * 4, '=')
+    clientDataJSON = base64.b64decode(clientDataJSON_padding).decode('utf8')
+    clientDataJSONparsed = json.loads(clientDataJSON)
+    retrievedChallenge = clientDataJSONparsed['challenge']
+    try:
+        data = database.query_db("select * from PublicKeyCredentialCreationOptions where challenge=?",[retrievedChallenge])[0]
+    except:
+        return jsonify({"Error:","Could not find challenge"}),500
+    #DELETE from table
+    database.delete_db("delete from PublicKeyCredentialCreationOptions where challenge=?",[retrievedChallenge])
+    signature = AuthenticatorAttestationResponse['signature']
+    assertion_response =  {'clientData':AuthenticatorAttestationResponse['clientDataJSON'],'authData':AuthenticatorAttestationResponse['authenticatorData'],'signature':signature,'userHandle':AuthenticatorAttestationResponse['userHandle']}
+
+    credential_id = AuthenticatorAttestationResponse.get('id')
+    user = database.query_db("select * from Users where credential_id=?",[credential_id])[0]
+    if len(user)==0:
+        return make_response(jsonify({'fail': 'User does not exist.'}), 401)
+    webauthn_user = webauthn.WebAuthnUser(
+        user[0], user[0], user[2], user[6],
+        user[4], user[3], user[5], user[7])
+
+    webauthn_assertion_response = webauthn.WebAuthnAssertionResponse(
+        webauthn_user,
+        assertion_response,
+        retrievedChallenge,
+        ORIGIN,
+        uv_required=False)  # User Verification
+    sign_count = webauthn_assertion_response.verify()
+    try:
+        sign_count = webauthn_assertion_response.verify()
+    except Exception as e:
+        print(e)
+        return make_response(jsonify({'fail': 'Assertion failed'}),500)
+
+    # Update counter.
+
+    #Update database
+    update = database.insert_db("update Users SET sign_count=? where username=?",[sign_count,user[1]])
+    identityObj={'username':user[1],'id':user[0],'displayname':user[2]}
+    expires = datetime.timedelta(hours=2)
+    print(identityObj)
+    jwt = create_access_token(identity=identityObj,expires_delta=expires)
+    return jsonify({
+        'success':
+        'Successfully authenticated as {}'.format(user[1]),
+        'jwt':jwt
+    })

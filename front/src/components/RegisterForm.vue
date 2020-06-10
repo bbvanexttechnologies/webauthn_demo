@@ -109,10 +109,16 @@
             clientDataJSON Object to test deception
 
             */
+            var transformCredentialCreateOptions = webauthn_tools.transformCredentialCreateOptions(response.data)
+            try {
+                var credential = await navigator.credentials.create({
+                    publicKey: transformCredentialCreateOptions
+                });
+                console.log("credential",credential)
+            } catch (err) {
+                return console.error("Error creating credential:", err);
+            }
 
-            const credential = await create({
-              publicKey: response.data
-            });
 
             //STEP 3 -> Creation of keys
             /*
@@ -124,10 +130,11 @@
 
             //STEP 4 -> The Authenticator returns the data to the Browser
             console.log("STEP 4",credential)
-
+            var transformNewAssertionForServer = webauthn_tools.transformNewAssertionForServer(credential)
+            console.log("transformed",transformNewAssertionForServer)
             //STEP 5 -> The browser creates the final data and sends them to the server: AuthenticatorAttestationResponse o
             axios.post('http://localhost:5000/registration/end', {
-              AuthenticatorAttestationResponse: credential
+              AuthenticatorAttestationResponse: transformNewAssertionForServer
             })
             .then( async function (response) {
               console.log(response)
@@ -145,5 +152,5 @@
       }
     }
   }
-  import {create} from '@github/webauthn-json';
+var webauthn_tools = require('../utils/webauthn.js');
 </script>

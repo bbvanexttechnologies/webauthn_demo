@@ -1,4 +1,4 @@
-#!/Users/ruthgnz/Documents/2020/FIDO-POST/back/bin/python
+#!/Users/ruthgnz/Documents/2020/FIDO-POST/webauthn_demo/back/bin/python
 
 import sys
 import getopt

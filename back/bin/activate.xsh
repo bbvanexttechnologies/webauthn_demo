@@ -28,7 +28,7 @@ def _deactivate(args):
 _deactivate(["nondestructive"])
 aliases["deactivate"] = _deactivate
 
-$VIRTUAL_ENV = r"/Users/ruthgnz/Documents/2020/FIDO-POST/back"
+$VIRTUAL_ENV = r"/Users/ruthgnz/Documents/2020/FIDO-POST/webauthn_demo/back"
 
 $_OLD_VIRTUAL_PATH = $PATH
 $PATH = $PATH[:]
