@@ -93,16 +93,18 @@
             .then( async function (response) {
               console.log('end',response)
               localStorage.setItem('token',response.data.jwt)
-              localStorage.setItem('isAuth',true)
-              
+              localStorage.setItem('isAuth',"true")
+              localStorage.setItem('username',response.data.username)
+
             })
             .catch(err => {
                 console.log(err)
-                localStorage.setItem('isAuth',false)
+                localStorage.setItem('isAuth',"false")
                 localStorage.setItem('token','')
+                localStorage.setItem('username','')
             })
 
-          });
+          })
 
 
         }
@@ -110,5 +112,4 @@
     }
   }
   var webauthn_tools = require('../utils/webauthn.js');
-
 </script>

@@ -6,7 +6,6 @@ import vuetify from './plugins/vuetify';
 
 
 Vue.prototype.$http = axios;
-localStorage.setItem('isAuth',false)
 new Vue({
   router,
   vuetify,

@@ -210,5 +210,6 @@ def verify_assertion():
     return jsonify({
         'success':
         'Successfully authenticated as {}'.format(user[1]),
-        'jwt':jwt
+        'jwt':jwt,
+        'username': user[1]
     })
