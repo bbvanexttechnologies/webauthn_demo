@@ -52,7 +52,8 @@
 </template>
 
 <script>
-  const axios = require('axios');
+
+  const axios = require('axios')
   export default {
     name: 'LoginForm',
     data: () => ({
@@ -90,11 +91,15 @@
               AuthenticatorAttestationResponse: transformAssertionForServer
             })
             .then( async function (response) {
-              console.log(response)
-
+              console.log('end',response)
+              localStorage.setItem('token',response.data.jwt)
+              localStorage.setItem('isAuth',true)
+              
             })
             .catch(err => {
                 console.log(err)
+                localStorage.setItem('isAuth',false)
+                localStorage.setItem('token','')
             })
 
           });
@@ -105,4 +110,5 @@
     }
   }
   var webauthn_tools = require('../utils/webauthn.js');
+
 </script>

@@ -3,10 +3,9 @@ import VueRouter from 'vue-router'
 import Login from '../views/Login.vue'
 import Home from '../views/Home.vue'
 Vue.use(VueRouter)
-import store from '../store' // your vuex store
-
+console.log('router',localStorage.getItem('isAuth'))
 const ifNotAuthenticated = (to, from, next) => {
-  if (!store.getters.isAuthenticated) {
+  if (localStorage.getItem('isAuth')) {
     next()
     return
   }
@@ -14,7 +13,7 @@ const ifNotAuthenticated = (to, from, next) => {
 }
 
 const ifAuthenticated = (to, from, next) => {
-  if (store.getters.isAuthenticated) {
+  if (!localStorage.getItem('isAuth')) {
     next()
     return
   }
