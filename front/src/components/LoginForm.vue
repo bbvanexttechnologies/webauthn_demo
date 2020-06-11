@@ -66,6 +66,7 @@
     }),
     methods: {
       submit(){
+        let self = this
         if (this.valid){
           axios.post('http://localhost:5000/login/init', {
             username: this.email
@@ -95,6 +96,7 @@
               localStorage.setItem('token',response.data.jwt)
               localStorage.setItem('isAuth',"true")
               localStorage.setItem('username',response.data.username)
+              self.$router.push('/')
 
             })
             .catch(err => {

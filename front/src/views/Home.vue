@@ -72,11 +72,14 @@ export default {
   },
   methods: {
     submit(){
+
       localStorage.setItem('token','')
       localStorage.setItem('isAuth',"false")
+      localStorage.setItem('username','')
       this.token = localStorage.getItem('token');
       this.username = localStorage.getItem('username')
       this.decoded = ''
+      this.$router.push('/login')
 
     }
   }
