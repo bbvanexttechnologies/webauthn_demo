@@ -22,9 +22,3 @@ npm run lint
 
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
-
-
-## BACK Project setup
-```
-It can be done using docker or python
-```
