@@ -2,3 +2,4 @@ Flask>=1.1.1,<1.2
 webauthn
 Flask-Cors
 Flask-JWT
+flask_jwt_extended

@@ -1,0 +1,20 @@
+version: "3.8"
+
+services:
+  front:
+    build: "./front"
+    image: "fido_front"
+    networks:
+      - fido_net
+    ports:
+      - "8080:8080"
+
+  back:
+    build: "./back"
+    image: "fido_back"
+    networks:
+      - fido_net
+
+
+networks:
+  fido_net:
