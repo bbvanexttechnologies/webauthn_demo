@@ -1,38 +1,41 @@
 # FIDO Register & Login DEMO
 
-Este Proyecto es una DEMO del estándar FIDO2 para autenticación sin contraseñas.
-Para la parte del servidor se ha empleado Python con el
+This project is a FIDO2 DEMO that can be used for register and authentication purposes under the FIDO2 paswordless standard.
+The FIDO server has been built using Python with an specific opensource module which includes all the functions to work with the standard. This module can be installed using pip.
+The fronted has been build using VueJS in conjuction with vuetify.
 
-## Comenzando 🚀
+Furthermore, the whole project has been dockerized and it can be built using docker-compose.
 
-_Estas instrucciones te permitirán obtener una copia del proyecto en funcionamiento en tu máquina local para propósitos de desarrollo y pruebas._
+## Init 🚀
 
-
-### Pre-requisitos 📋
-
-Docker y docker-compose.
-Es necesario que el dispositivo cuente con huella dactilar compatible con FIDO o bien que se disponga de una llave física compatible con FIDO.
+This instructions will let you obtain a local copy of the project for development and trial.
 
 
-### Instalación 🔧
+### Pre-requirements 📋
 
-Construir las imágenes
+It's necessary to have both Docker and docker-compose installed and running on the host machine.
+In order to completely try the application it's necessary to have a FIDO device, it can be an external device such as a Yubikey or an embeded element in the laptop such as a fingerprint device.
+
+
+### Installation 🔧
+
+Build the images with docker-compose
 ```
 docker-compose up
 ```
 
-Acceder al frontal en el navegador
+Open the web browser
 ```
 localhost:8080
 ```
 
 
-## Notas 📦
+## Notes 📦
 
 WebAuthn javascript will work only when used with HTTPS or on the localhost hostname (in this case HTTPS is not required).
 
 
-## Construido con 🛠️
+## Built with 🛠️
 
 
 * [py_webauthn](https://github.com/duo-labs/py_webauthn) - FIDO Module for Python
@@ -44,7 +47,7 @@ WebAuthn javascript will work only when used with HTTPS or on the localhost host
 
 
 ---
-⌨️ con ❤️ por Cybersecurity Lab
+⌨️ With ❤️ by Cybersecurity Lab
 
 
 
