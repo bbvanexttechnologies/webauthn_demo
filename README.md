@@ -1,33 +1,51 @@
-# webauthn_demo
-Demo for POST
+# FIDO Register & Login DEMO
 
-# fido-front
+Este Proyecto es una DEMO del estándar FIDO2 para autenticación sin contraseñas.
+Para la parte del servidor se ha empleado Python con el
 
-## FRONT Project setup
-```
-npm install
-```
+## Comenzando 🚀
 
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
-
-### Compiles and minifies for production
-```
-npm run build
-```
-
-### Lints and fixes files
-```
-npm run lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+_Estas instrucciones te permitirán obtener una copia del proyecto en funcionamiento en tu máquina local para propósitos de desarrollo y pruebas._
 
 
-## BACK Project setup
+### Pre-requisitos 📋
+
+Docker y docker-compose.
+Es necesario que el dispositivo cuente con huella dactilar compatible con FIDO o bien que se disponga de una llave física compatible con FIDO.
+
+
+### Instalación 🔧
+
+Construir las imágenes
 ```
-It can be done using docker or python
+docker-compose up
 ```
+
+Acceder al frontal en el navegador
+```
+localhost:8080
+```
+
+
+## Notas 📦
+
+WebAuthn javascript will work only when used with HTTPS or on the localhost hostname (in this case HTTPS is not required).
+
+
+## Construido con 🛠️
+
+
+* [py_webauthn](https://github.com/duo-labs/py_webauthn) - FIDO Module for Python
+* [Flask](https://flask.palletsprojects.com/en/1.1.x/) - Python Server
+* [VueJS](https://vuejs.org/) - Framework Front
+* [Vuetify](https://vuetifyjs.com/en/) - VUE UI Library
+
+
+
+
+---
+⌨️ con ❤️ por Cybersecurity Lab
+
+
+
+
