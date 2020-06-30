@@ -1,3 +1,5 @@
+> Disclaimer: This repository is an educational proof of concept, please, do not use it in production under any circumstance.
+
 # FIDO Register & Login DEMO
 
 This project is a FIDO2 DEMO that can be used for register and authentication purposes under the FIDO2 paswordless standard.
@@ -5,6 +7,8 @@ The FIDO server has been built using Python with an specific opensource module w
 The fronted has been build using VueJS in conjuction with vuetify.
 
 Furthermore, the whole project has been dockerized and it can be built using docker-compose.
+
+> If you don't know about passwordless, check our posts in the [BBVA Next Technologies blog](https://www.bbvanexttechnologies.com/category/labs/). There, you can read the first of two post about passwordless: [Passwordless: el fin de las contraseñas](https://www.bbvanexttechnologies.com/passwordless-el-fin-de-las-contrasenas/). The next one, Construyendo tu aplicación passwordless, will be ready soon and we will explain there all the FIDO2 protocol messages.
 
 ## Init 🚀
 
